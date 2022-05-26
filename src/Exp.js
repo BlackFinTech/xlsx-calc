@@ -76,7 +76,25 @@ module.exports = function Exp(formula) {
                     } else {
                         checkVariable(args[i - 1]);
                         checkVariable(args[i + 1]);
-                        let r = fn(args[i - 1].calc(), args[i + 1].calc());
+
+                        let a = args[i - 1].calc();
+                        let b = args[i + 1].calc();
+                        if (Array.isArray(b)) {
+                          throw new Error('not supported')
+                        }
+                        let r = null;
+                        if (Array.isArray(a) && !Array.isArray(b)) {
+                          r = a.map((aSubVal) => fn(aSubVal, b));
+                        } else if(!Array.isArray(a) && Array.isArray(b)) {
+                          r = b.map((bSubVal) => fn(a, bSubVal));
+                        } else if(Array.isArray(a) && Array.isArray(b)) {
+                          r = Array(a.length);
+                          for(let j = 0; j < a.length; j++) {
+                            r[j] = fn(a[j], b[j]);
+                          }
+                        } else {
+                          r = fn(a, b);
+                        }
                         args.splice(i - 1, 3, new RawValue(r));
                         i--;
                     }
