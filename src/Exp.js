@@ -24,6 +24,9 @@ module.exports = function Exp(formula) {
                 throw Error('#VALUE!');
             }
             formula.cell.v = self.calc();
+            if(Number.isNaN(formula.cell.v)) {
+              formula.cell.v = 0;
+            }
             if (typeof(formula.cell.v) === 'string') {
                 formula.cell.t = 's';
             }
@@ -81,6 +84,12 @@ module.exports = function Exp(formula) {
                         let b = args[i + 1].calc();
                         if (Array.isArray(b)) {
                           throw new Error('not supported')
+                        }
+                        if(Number.isNaN(a)) {
+                          a = 0;
+                        }
+                        if(Number.isNaN(b)) {
+                          b = 0;
                         }
                         let r = null;
                         if (Array.isArray(a) && !Array.isArray(b)) {
