@@ -10,6 +10,7 @@ let formulas = {
     'ABS': Math.abs,
     'SQRT': Math.sqrt,
     'VLOOKUP': vlookup,
+    'XLOOKUP': xlookup,
     'MAX': max,
     'SUM': sum,
     'MIN': min,
@@ -882,6 +883,38 @@ function substitute(text, old_text, new_text, occurrence) {
 
 function ceiling(number, significance) {
     return Math.ceil(number / significance) * significance
+}
+
+function xlookup(lookup_value, lookup_array, return_array, if_not_found, match_mode = 0) {
+  let result;
+  lookup_array = Array.isArray(lookup_array[0]) ? lookup_array.flat(1) : lookup_array;
+  if (match_mode === 0) {
+    // Exact Match
+    const index = lookup_array.indexOf(lookup_array.find((val) => val === lookup_value));
+    result = index !== -1 ? return_array[index] : if_not_found;
+  } else if (match_mode === -1) {
+    // Exact or Smaller Match
+    for (let i = lookup_array.length - 1; i >= 0; i--) {
+      if (lookup_array[i] <= lookup_value) {
+        result = return_array[i];
+        break;
+      }
+    }
+    result = result !== undefined ? result : if_not_found;
+  } else {
+    // Exact or Larger Match
+    for (let i = 0; i < lookup_array.length; i++) {
+      if (lookup_array[i] >= lookup_value) {
+        result = return_array[i];
+        break;
+      }
+    }
+    result = result !== undefined ? result : if_not_found;
+  }
+  if (result) {
+    return result;
+  }
+  throw Error('#N/A');
 }
 
 module.exports = formulas;
